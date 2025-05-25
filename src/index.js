@@ -3,8 +3,14 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('node:path');
 const morgan = require('morgan');
+const axios = require('axios'); // Import axios for HTTP requests
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const resumeRoutes = require('./routes/resumeRoutes');
+
+const corsOptions = {
+  origin: 'https://ats.sagar.ltd', // Replace with https if your site uses it
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +19,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,6 +36,17 @@ app.get('/', (req, res) => {
 // API Routes
 app.use('/api/resumes', resumeRoutes);
 
+// Route to communicate with ats.sagar.ltd
+app.get('/api/external', async (req, res) => {
+  try {
+    const response = await axios.get('https://ats.sagar.ltd/api/some-endpoint'); // Replace with the actual endpoint
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error communicating with ats.sagar.ltd:', error.message);
+    res.status(500).json({ message: 'Failed to communicate with ats.sagar.ltd' });
+  }
+});
+
 // Handle ML service communication
 app.use('/api/ml', (req, res) => {
   res.json({ message: 'ML Service endpoint' });
@@ -43,4 +60,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});
