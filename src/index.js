@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const path = require('path');
+const path = require('node:path');
 const morgan = require('morgan');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const resumeRoutes = require('./routes/resumeRoutes');
