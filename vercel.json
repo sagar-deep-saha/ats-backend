@@ -1,0 +1,9 @@
+{
+    "projects": [
+      {
+        "src": "server/api/**/*.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "rootDirectory": "server"
+  }
